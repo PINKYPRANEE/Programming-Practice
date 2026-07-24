@@ -1,0 +1,42 @@
+#include <iostream>
+#include <vector>
+#include <algorithm>
+using namespace std;
+
+int main() {
+    ios::sync_with_stdio(false);
+    cin.tie(nullptr);
+
+    int N;
+    cin >> N;
+
+    vector<long long> H(N);
+    vector<long long> L(N);
+
+    for (int i = 0; i < N; i++) {
+        cin >> H[i] >> L[i];
+    }
+
+    // Build suffix maximum heights
+    vector<long long> suffixMax(N);
+    suffixMax[N - 1] = H[N - 1];
+
+    for (int i = N - 2; i >= 0; i--) {
+        suffixMax[i] = max(H[i], suffixMax[i + 1]);
+    }
+
+    int Q;
+    cin >> Q;
+
+    while (Q--) {
+        long long T;
+        cin >> T;
+
+        // First leave time > T
+        int idx = upper_bound(L.begin(), L.end(), T) - L.begin();
+
+        cout << suffixMax[idx] << "\n";
+    }
+
+    return 0;
+}
