@@ -1,0 +1,30 @@
+#include <iostream>
+#include <vector>
+using namespace std;
+
+int main() {
+    ios::sync_with_stdio(false);
+    cin.tie(nullptr);
+
+    int N;
+    cin >> N;
+
+    vector<int> A(N + 1);
+    vector<int> last(N + 1, 0);
+
+    long long dp = 0;
+    long long ans = 0;
+
+    for (int i = 1; i <= N; i++) {
+        cin >> A[i];
+
+        dp += (i - last[A[i]]);
+        ans += dp;
+
+        last[A[i]] = i;
+    }
+
+    cout << ans << '\n';
+
+    return 0;
+}
