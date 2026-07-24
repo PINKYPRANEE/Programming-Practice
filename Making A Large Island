@@ -1,0 +1,81 @@
+class Solution {
+public:
+    int n;
+    vector<vector<int>> dir = {{1,0},{-1,0},{0,1},{0,-1}};
+
+    int dfs(vector<vector<int>>& grid, int i, int j, int id) {
+        if(i<0 || j<0 || i>=n || j>=n || grid[i][j]!=1)
+            return 0;
+
+        grid[i][j]=id;
+
+        int area=1;
+
+        for(auto &d:dir)
+            area+=dfs(grid,i+d[0],j+d[1],id);
+
+        return area;
+    }
+
+    int largestIsland(vector<vector<int>>& grid) {
+
+        n=grid.size();
+
+        unordered_map<int,int> area;
+
+        int id=2;
+
+        int ans=0;
+
+        // Label every island
+        for(int i=0;i<n;i++){
+            for(int j=0;j<n;j++){
+
+                if(grid[i][j]==1){
+
+                    area[id]=dfs(grid,i,j,id);
+
+                    ans=max(ans,area[id]);
+
+                    id++;
+                }
+            }
+        }
+
+        // Try converting every 0
+        for(int i=0;i<n;i++){
+
+            for(int j=0;j<n;j++){
+
+                if(grid[i][j]==0){
+
+                    unordered_set<int> seen;
+
+                    int cur=1;
+
+                    for(auto &d:dir){
+
+                        int ni=i+d[0];
+                        int nj=j+d[1];
+
+                        if(ni>=0 && nj>=0 && ni<n && nj<n){
+
+                            int islandId=grid[ni][nj];
+
+                            if(islandId>1 && seen.count(islandId)==0){
+
+                                cur+=area[islandId];
+
+                                seen.insert(islandId);
+                            }
+                        }
+                    }
+
+                    ans=max(ans,cur);
+                }
+            }
+        }
+
+        return ans;
+    }
+};
