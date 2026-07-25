@@ -1,0 +1,85 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+class DSU {
+public:
+    vector<int> parent, sz;
+
+    DSU(int n) {
+        parent.resize(n + 1);
+        sz.assign(n + 1, 1);
+
+        for (int i = 1; i <= n; i++)
+            parent[i] = i;
+    }
+
+    int find(int x) {
+        if (parent[x] == x)
+            return x;
+        return parent[x] = find(parent[x]); // Path Compression
+    }
+
+    void unite(int a, int b) {
+        int pa = find(a);
+        int pb = find(b);
+
+        if (pa == pb)
+            return;
+
+        // Union by Size
+        if (sz[pa] < sz[pb])
+            swap(pa, pb);
+
+        parent[pb] = pa;
+        sz[pa] += sz[pb];
+    }
+};
+
+int main() {
+    ios::sync_with_stdio(false);
+    cin.tie(nullptr);
+
+    int N, M;
+    cin >> N >> M;
+
+    DSU dsu(N);
+
+    vector<pair<int, int>> edges;
+
+    // Build connected components
+    for (int i = 0; i < M; i++) {
+        int u, v;
+        cin >> u >> v;
+        edges.push_back({u, v});
+        dsu.unite(u, v);
+    }
+
+    unordered_map<int, long long> vertices;
+    unordered_map<int, long long> edgeCount;
+
+    // Count vertices in each component
+    for (int i = 1; i <= N; i++) {
+        int root = dsu.find(i);
+        vertices[root]++;
+    }
+
+    // Count existing edges in each component
+    for (auto &e : edges) {
+        int root = dsu.find(e.first);
+        edgeCount[root]++;
+    }
+
+    long long ans = 0;
+
+    for (auto &it : vertices) {
+        long long size = it.second;
+        long long edgesPresent = edgeCount[it.first];
+
+        long long totalEdges = size * (size - 1) / 2;
+        ans += totalEdges - edgesPresent;
+    }
+
+    cout << ans << "\n";
+
+    return 0;
+}
