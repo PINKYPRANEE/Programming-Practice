@@ -1,0 +1,74 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+int main() {
+    ios::sync_with_stdio(false);
+    cin.tie(nullptr);
+
+    int N, M;
+    cin >> N >> M;
+
+    vector<int> A(N), B(N);
+    vector<int> C(M), D(M);
+
+    for (int i = 0; i < N; i++)
+        cin >> A[i];
+
+    for (int i = 0; i < N; i++)
+        cin >> B[i];
+
+    for (int i = 0; i < M; i++)
+        cin >> C[i];
+
+    for (int i = 0; i < M; i++)
+        cin >> D[i];
+
+    // {first dimension, second dimension, type}
+    // type = 0 -> box
+    // type = 1 -> chocolate
+    vector<tuple<int, int, int>> items;
+
+    for (int i = 0; i < M; i++) {
+        items.push_back({C[i], D[i], 0});
+    }
+
+    for (int i = 0; i < N; i++) {
+        items.push_back({A[i], B[i], 1});
+    }
+
+    // Sort by first dimension decreasing.
+    // For equal first dimension, box comes first.
+    sort(items.begin(), items.end(), [](auto &x, auto &y) {
+        if (get<0>(x) != get<0>(y))
+            return get<0>(x) > get<0>(y);
+
+        return get<2>(x) < get<2>(y);
+    });
+
+    multiset<int> boxes;
+
+    for (auto [first, second, type] : items) {
+
+        if (type == 0) {
+            // This is a box.
+            boxes.insert(second);
+        }
+        else {
+            // This is a chocolate.
+            // Find the smallest D >= B.
+            auto it = boxes.lower_bound(second);
+
+            if (it == boxes.end()) {
+                cout << "No\n";
+                return 0;
+            }
+
+            // Use this box.
+            boxes.erase(it);
+        }
+    }
+
+    cout << "Yes\n";
+
+    return 0;
+}
