@@ -1,0 +1,40 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+int main() {
+    ios::sync_with_stdio(false);
+    cin.tie(nullptr);
+
+    int N;
+    cin >> N;
+
+    vector<int> a(N + 1);
+
+    for (int i = 1; i <= N; i++) {
+        cin >> a[i];
+    }
+
+    long long ans = 0;
+
+    // Case 1: a[i] = i
+    long long fixed = 0;
+
+    for (int i = 1; i <= N; i++) {
+        if (a[i] == i) {
+            fixed++;
+        }
+    }
+
+    ans += fixed * (fixed - 1) / 2;
+
+    // Case 2: a[i] = j and a[j] = i
+    for (int i = 1; i <= N; i++) {
+        if (i < a[i] && a[a[i]] == i) {
+            ans++;
+        }
+    }
+
+    cout << ans << '\n';
+
+    return 0;
+}
