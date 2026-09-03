@@ -1,0 +1,73 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+void solve() {
+    string a, b;
+    cin >> a >> b;
+
+    int n = a.size();
+    int m = b.size();
+
+    // Prefix sums modulo 10
+    vector<int> ps(n + 1, 0);
+    vector<int> pt(m + 1, 0);
+
+    for (int i = 0; i < n; i++) {
+        ps[i + 1] = (ps[i] + (a[i] - '0')) % 10;
+    }
+
+    for (int i = 0; i < m; i++) {
+        pt[i + 1] = (pt[i] + (b[i] - '0')) % 10;
+    }
+
+    // Necessary condition:
+    // total sums modulo 10 must be equal.
+    if (ps[n] != pt[m]) {
+        cout << -1 << '\n';
+        return;
+    }
+
+    /*
+        dp[i][j] = maximum number of matching blocks
+        considering prefixes ending at i and j.
+    */
+
+    vector<vector<int>> dp(n + 1, vector<int>(m + 1, 0));
+
+    for (int i = 0; i <= n; i++) {
+        for (int j = 0; j <= m; j++) {
+
+            // Skip one prefix position of a
+            if (i < n) {
+                dp[i + 1][j] = max(dp[i + 1][j], dp[i][j]);
+            }
+
+            // Skip one prefix position of b
+            if (j < m) {
+                dp[i][j + 1] = max(dp[i][j + 1], dp[i][j]);
+            }
+
+            // Matching prefix sums => one more equal block
+            if (i < n && j < m && ps[i] == pt[j]) {
+                dp[i + 1][j + 1] =
+                    max(dp[i + 1][j + 1], dp[i][j] + 1);
+            }
+        }
+    }
+
+    cout << dp[n][m] << '\n';
+}
+
+int main() {
+    ios::sync_with_stdio(false);
+    cin.tie(nullptr);
+
+    int t;
+    cin >> t;
+
+    while (t--) {
+        solve();
+    }
+
+    return 0;
+}
