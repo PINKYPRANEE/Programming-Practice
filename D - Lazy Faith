@@ -1,0 +1,82 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+long long solve(long long x,
+                const vector<long long>& s,
+                const vector<long long>& t) {
+
+    long long ans = LLONG_MAX;
+
+    // Find first shrine >= x
+    auto si = lower_bound(s.begin(), s.end(), x);
+
+    // Find first temple >= x
+    auto ti = lower_bound(t.begin(), t.end(), x);
+
+    vector<long long> shrines;
+    vector<long long> temples;
+
+    // Shrine on the right
+    if (si != s.end()) {
+        shrines.push_back(*si);
+    }
+
+    // Shrine on the left
+    if (si != s.begin()) {
+        shrines.push_back(*prev(si));
+    }
+
+    // Temple on the right
+    if (ti != t.end()) {
+        temples.push_back(*ti);
+    }
+
+    // Temple on the left
+    if (ti != t.begin()) {
+        temples.push_back(*prev(ti));
+    }
+
+    // Try all possible nearby shrine-temple pairs
+    for (long long shrine : shrines) {
+        for (long long temple : temples) {
+
+            // Visit shrine first
+            long long option1 =
+                abs(x - shrine) + abs(shrine - temple);
+
+            // Visit temple first
+            long long option2 =
+                abs(x - temple) + abs(temple - shrine);
+
+            ans = min(ans, min(option1, option2));
+        }
+    }
+
+    return ans;
+}
+
+int main() {
+    ios::sync_with_stdio(false);
+    cin.tie(nullptr);
+
+    int A, B, Q;
+    cin >> A >> B >> Q;
+
+    vector<long long> s(A);
+    vector<long long> t(B);
+
+    for (auto &x : s)
+        cin >> x;
+
+    for (auto &x : t)
+        cin >> x;
+
+    while (Q--) {
+        long long x;
+        cin >> x;
+
+        cout << solve(x, s, t) << '\n';
+    }
+
+    return 0;
+}
