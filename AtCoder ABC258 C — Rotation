@@ -1,0 +1,33 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+int main() {
+    ios::sync_with_stdio(false);
+    cin.tie(nullptr);
+
+    int N, Q;
+    cin >> N >> Q;
+
+    string S;
+    cin >> S;
+
+    long long shift = 0;
+
+    while (Q--) {
+        int type, x;
+        cin >> type >> x;
+
+        if (type == 1) {
+            // Rotate right by x
+            shift = (shift + x) % N;
+        }
+        else {
+            // Find the original index
+            int index = (N - shift + x - 1) % N;
+
+            cout << S[index] << '\n';
+        }
+    }
+
+    return 0;
+}
