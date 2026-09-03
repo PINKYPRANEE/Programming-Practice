@@ -1,0 +1,58 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+int main() {
+    ios::sync_with_stdio(false);
+    cin.tie(nullptr);
+
+    int N;
+    cin >> N;
+
+    const int MAXA = 200000;
+
+    vector<int> cnt(MAXA + 1, 0);
+
+    int maxA = 0;
+
+    for (int i = 0; i < N; i++) {
+        int A;
+        cin >> A;
+
+        cnt[A]++;
+        maxA = max(maxA, A);
+    }
+
+    // suffix[x] = number of Ai >= x
+    vector<int> suffix(maxA + 2, 0);
+
+    for (int x = maxA; x >= 1; x--) {
+        suffix[x] = suffix[x + 1] + cnt[x];
+    }
+
+    // Build answer from the most significant position.
+    string ans;
+    long long carry = 0;
+
+    for (int pos = maxA - 1; pos >= 0; pos--) {
+
+        // Number of B_i having a digit at this position
+        long long value = suffix[pos + 1] + carry;
+
+        ans.push_back(char('0' + value % 10));
+
+        carry = value / 10;
+    }
+
+    // Remaining carry
+    while (carry > 0) {
+        ans.push_back(char('0' + carry % 10));
+        carry /= 10;
+    }
+
+    // We built from right to left
+    reverse(ans.begin(), ans.end());
+
+    cout << ans << '\n';
+
+    return 0;
+}
